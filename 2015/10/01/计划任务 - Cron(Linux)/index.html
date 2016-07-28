@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Linux 定时任务 | 技术改变生活</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="开笔最近在做数据收集涉及到一些日志文件轮转切割，笔者想用一个定时任务来实现定时轮转。调研后决定使用 Linux 系统的 cron 服务。
+Cron 是Uninx系（Linux） 操作系统的后台驻留程序，系统管理员用得相对多一些。Cron 可以被设置为开机启动，在 centos 中默认就是开机启动的服务。
+在使用 cron 服务的时候，往往我们都需要 先确认cron服务本身是否开启，处于运行状态，确">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Linux 定时任务">
+<meta property="og:url" content="http://yoursite.com/2015/10/01/计划任务 - Cron(Linux)/index.html">
+<meta property="og:site_name" content="技术改变生活">
+<meta property="og:description" content="开笔最近在做数据收集涉及到一些日志文件轮转切割，笔者想用一个定时任务来实现定时轮转。调研后决定使用 Linux 系统的 cron 服务。
+Cron 是Uninx系（Linux） 操作系统的后台驻留程序，系统管理员用得相对多一些。Cron 可以被设置为开机启动，在 centos 中默认就是开机启动的服务。
+在使用 cron 服务的时候，往往我们都需要 先确认cron服务本身是否开启，处于运行状态，确">
+<meta property="og:updated_time" content="2016-07-28T02:11:20.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Linux 定时任务">
+<meta name="twitter:description" content="开笔最近在做数据收集涉及到一些日志文件轮转切割，笔者想用一个定时任务来实现定时轮转。调研后决定使用 Linux 系统的 cron 服务。
+Cron 是Uninx系（Linux） 操作系统的后台驻留程序，系统管理员用得相对多一些。Cron 可以被设置为开机启动，在 centos 中默认就是开机启动的服务。
+在使用 cron 服务的时候，往往我们都需要 先确认cron服务本身是否开启，处于运行状态，确">
+  
+    <link rel="alternative" href="/atom.xml" title="技术改变生活" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+	<header id="header" class="inner">
+		<a href="/" class="profilepic">
+			
+			<img lazy-src="http://7xn1vb.com1.z0.glb.clouddn.com/img/avatar.jpg" class="js-avatar">
+			
+		</a>
+
+		<hgroup>
+		  <h1 class="header-author"><a href="/">加帆</a></h1>
+		</hgroup>
+
+		
+		<p class="header-subtitle">走走停停 留一路好心情</p>
+		
+
+		
+			<div class="switch-btn">
+				<div class="icon">
+					<div class="icon-ctn">
+						<div class="icon-wrap icon-house" data-idx="0">
+							<div class="birdhouse"></div>
+							<div class="birdhouse_holes"></div>
+						</div>
+						<div class="icon-wrap icon-ribbon hide" data-idx="1">
+							<div class="ribbon"></div>
+						</div>
+						
+						<div class="icon-wrap icon-link hide" data-idx="2">
+							<div class="loopback_l"></div>
+							<div class="loopback_r"></div>
+						</div>
+						
+						
+						<div class="icon-wrap icon-me hide" data-idx="3">
+							<div class="user"></div>
+							<div class="shoulder"></div>
+						</div>
+						
+					</div>
+					
+				</div>
+				<div class="tips-box hide">
+					<div class="tips-arrow"></div>
+					<ul class="tips-inner">
+						<li>菜单</li>
+						<li>标签</li>
+						
+						<li>友情链接</li>
+						
+						
+						<li>关于我</li>
+						
+					</ul>
+				</div>
+			</div>
+		
+
+		<div class="switch-area">
+			<div class="switch-wrap">
+				<section class="switch-part switch-part1">
+					<nav class="header-menu">
+						<ul>
+						
+							<li><a href="/">主页</a></li>
+				        
+							<li><a href="/archives">所有文章</a></li>
+				        
+						</ul>
+					</nav>
+					<nav class="header-nav">
+						<div class="social">
+							
+								<a class="github" target="_blank" href="#" title="github">github</a>
+					        
+								<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+					        
+								<a class="rss" target="_blank" href="#" title="rss">rss</a>
+					        
+								<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+					        
+						</div>
+					</nav>
+				</section>
+				
+				
+				<section class="switch-part switch-part2">
+					<div class="widget tagcloud" id="js-tagcloud">
+						<a href="/tags/EI/" style="font-size: 20px;">EI</a> <a href="/tags/Linux/" style="font-size: 10px;">Linux</a> <a href="/tags/Nginx/" style="font-size: 10px;">Nginx</a> <a href="/tags/OS-X/" style="font-size: 20px;">OS X</a> <a href="/tags/bi/" style="font-size: 10px;">bi</a> <a href="/tags/big-data/" style="font-size: 10px;">big data</a> <a href="/tags/cron/" style="font-size: 10px;">cron</a> <a href="/tags/logrotate/" style="font-size: 10px;">logrotate</a> <a href="/tags/server/" style="font-size: 10px;">server</a> <a href="/tags/切割/" style="font-size: 10px;">切割</a> <a href="/tags/同步/" style="font-size: 10px;">同步</a> <a href="/tags/商业智能/" style="font-size: 10px;">商业智能</a> <a href="/tags/备份/" style="font-size: 10px;">备份</a> <a href="/tags/大数据/" style="font-size: 10px;">大数据</a> <a href="/tags/客户端设计/" style="font-size: 10px;">客户端设计</a> <a href="/tags/数据采集/" style="font-size: 10px;">数据采集</a> <a href="/tags/日志/" style="font-size: 10px;">日志</a> <a href="/tags/转存/" style="font-size: 10px;">转存</a> <a href="/tags/镜像/" style="font-size: 10px;">镜像</a>
+					</div>
+				</section>
+				
+				
+				
+				<section class="switch-part switch-part3">
+					<div id="js-friends">
+					
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">奥巴马的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">卡卡的美丽传说</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">本泽马的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">吉格斯的博客</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">习大大大不同</a>
+			        
+			          <a target="_blank" class="main-nav-link switch-friends-link" href="http://localhost:4000/">托蒂的博客</a>
+			        
+			        </div>
+				</section>
+				
+
+				
+				
+				<section class="switch-part switch-part4">
+				
+					<div id="js-aboutme">从事移动相关研发5年，3年数据相关研发经验，偏好于研究学习移动端用户体验、用户行为采集、web服务(日志接收与处理、管理后台、报表平台)等方向～摄影爱好者</div>
+				</section>
+				
+			</div>
+		</div>
+	</header>				
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+  	<div class="overlay">
+  		<div class="slider-trigger"></div>
+  		<h1 class="header-author js-mobile-header hide">加帆</h1>
+  	</div>
+	<div class="intrude-less">
+		<header id="header" class="inner">
+			<div class="profilepic">
+				<img lazy-src="http://7xn1vb.com1.z0.glb.clouddn.com/img/avatar.jpg" class="js-avatar">
+			</div>
+			<hgroup>
+			  <h1 class="header-author">加帆</h1>
+			</hgroup>
+			
+			<p class="header-subtitle">走走停停 留一路好心情</p>
+			
+			<nav class="header-menu">
+				<ul>
+				
+					<li><a href="/">主页</a></li>
+		        
+					<li><a href="/archives">所有文章</a></li>
+		        
+		        <div class="clearfix"></div>
+				</ul>
+			</nav>
+			<nav class="header-nav">
+				<div class="social">
+					
+						<a class="github" target="_blank" href="#" title="github">github</a>
+			        
+						<a class="weibo" target="_blank" href="#" title="weibo">weibo</a>
+			        
+						<a class="rss" target="_blank" href="#" title="rss">rss</a>
+			        
+						<a class="zhihu" target="_blank" href="#" title="zhihu">zhihu</a>
+			        
+				</div>
+			</nav>
+		</header>				
+	</div>
+</nav>
+      <div class="body-wrap"><article id="post-计划任务 - Cron(Linux)" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/2015/10/01/计划任务 - Cron(Linux)/" class="article-date">
+  	<time datetime="2015-10-01T06:34:13.000Z" itemprop="datePublished">2015-10-01</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Linux 定时任务
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+	<div class="article-tag tagcloud">
+		<ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux/">Linux</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/cron/">cron</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/server/">server</a></li></ul>
+	</div>
+
+        
+	<div class="article-category tagcloud">
+	<a class="article-category-link" href="/categories/运维/">运维</a>
+	</div>
+
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+      
+<div id="toc" class="toc-article">
+  <strong class="toc-title">文章目录</strong>
+<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#开笔"><span class="toc-text">开笔</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cron服务查看"><span class="toc-text">cron服务查看</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#cron服务管理"><span class="toc-text">cron服务管理</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#配置-corn-服务权限"><span class="toc-text">配置 corn 服务权限</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#编辑cron任务"><span class="toc-text">编辑cron任务</span></a></li></ol>
+</div>
+
+        <h2 id="开笔"><a href="#开笔" class="headerlink" title="开笔"></a>开笔</h2><p>最近在做数据收集涉及到一些日志文件轮转切割，笔者想用一个定时任务来实现定时轮转。调研后决定使用 Linux 系统的 cron 服务。</p>
+<p><a href="https://en.wikipedia.org/wiki/Cron" target="_blank" rel="external">Cron</a> 是Uninx系（Linux） 操作系统的后台驻留程序，系统管理员用得相对多一些。Cron 可以被设置为开机启动，在 centos 中默认就是开机启动的服务。</p>
+<p>在使用 cron 服务的时候，往往我们都需要 先确认cron服务本身是否开启，处于运行状态，确认当前用户是否有权限正常使用cron，编辑下发cron计划任务，确认我们的计划任务是否如约按照计划执行。本篇笔者就和大家一起看看：</p>
+<ol>
+<li>查看当前系统cron服务状态</li>
+<li>管理 cron 服务</li>
+<li>配置 corn 服务权限</li>
+<li>编辑下发 cron 计划任务</li>
+<li>查看 任务是否按照计划执行</li>
+</ol>
+<h2 id="cron服务查看"><a href="#cron服务查看" class="headerlink" title="cron服务查看"></a>cron服务查看</h2><p>除了可以用 ps 命令查看 cron 服务进程运行状态，还可以查看正在运行的cron服务调度本身的状态。通过 crontab 命令对cron服务的设置。用：</p>
+<pre><code>man crontab
+</code></pre><p>查看一下crontab命令，发现，crontab 有4个可选参数：</p>
+<ul>
+<li>-u:设定某个用户的cron服务，一般root用户在执行这个命令的时候需要此参数</li>
+<li>-l:列出某个用户cron服务的详细内容</li>
+<li>-r:删除某个用户的cron服务</li>
+<li>-e:编辑某个用户的cron服务</li>
+</ul>
+<h2 id="cron服务管理"><a href="#cron服务管理" class="headerlink" title="cron服务管理"></a>cron服务管理</h2><p>如果经过查看，我们发现cron并不是你要的状态，那么就开始管理它吧。作为后台服务，cron有着与我们熟知的服务程序相似地基本管理命令：启动、停止、重启、重新载入配置(需要稍微注意一点，这里是crond 而不是 cron)：</p>
+<ul>
+<li><p>启动服务: </p>
+  <figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta-keyword">/sbin/</span>service crond star</div></pre></td></tr></table></figure>
+</li>
+<li><p>关闭服务 </p>
+  <figure class="highlight arduino"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">/sbin/service crond <span class="built_in">stop</span></div></pre></td></tr></table></figure>
+</li>
+<li><p>重启服务</p>
+  <figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta-keyword">/sbin/</span>service crond restart</div></pre></td></tr></table></figure>
+</li>
+<li><p>重新载入配置</p>
+<p>  在每一次重新修改过cron配置文件，请务必重新载入一下配置：</p>
+  <figure class="highlight dts"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="meta-keyword">/sbin/</span>service crond reload</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h2 id="配置-corn-服务权限"><a href="#配置-corn-服务权限" class="headerlink" title="配置 corn 服务权限"></a>配置 corn 服务权限</h2><p>在 Linux 操作系统中，对用户使用cron服务的权限控制在 /etc/cron.allow 和 /etc/cron.deny 两个文件中配置实现，但 /etc/cron.allow 文件非必须存在的。</p>
+<p>如果 /etc/cron.allow 文件存在，则所有需要运行 crontab 命令的用户必须在这个文件被列举出来；如果 /etc/cron.allow 文件不存在，但<br>/etc/cron.deny 文件存在，则所有需要运行 crontab 命令的用户必须在这个文件不被列举出来。当这两个文件都不存在的情况下，在一些 Linux 系统（如 Ubuntu、Debian ，但不是所有）允许所有用户运行 crontab 命令。</p>
+<p>需要注意的是，系统中，不在 /etc/shadow 文件所列的用户，是没有权限使用 crontab 命令。</p>
+<h2 id="编辑cron任务"><a href="#编辑cron任务" class="headerlink" title="编辑cron任务"></a>编辑cron任务</h2><ol>
+<li><p>语法</p>
+ <figure class="highlight gherkin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">*</span> <span class="symbol">*</span> <span class="symbol">*</span> <span class="symbol">*</span> <span class="symbol">*</span>  Command_to_execute</div><div class="line">- – – – -</div><div class="line">|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|</div><div class="line">|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> +—– Day of week (0–6) (Sunday=0) or Sun, Mon, Tue,…</span></div><div class="line">|<span class="string"> </span>|<span class="string"> </span>|<span class="string"> +———- Month (1–12) or Jan, Feb,…</span></div><div class="line">|<span class="string"> </span>|<span class="string"> +————-— Day of month (1–31)</span></div><div class="line">|<span class="string"> +——————– Hour (0–23)</span></div><div class="line">+————————- Minute (0–59)</div></pre></td></tr></table></figure>
+</li>
+<li><p>示例</p>
+<p> 每天凌晨轮转nginx的access日志</p>
+ <figure class="highlight basic"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="symbol">01 </span><span class="number">00</span> * * * /<span class="keyword">usr</span>/sbin/logrotate /etc/logrotate.d/nginx-access-<span class="keyword">log</span>.conf</div></pre></td></tr></table></figure>
+<p> 系统便会在每天凌晨壹分的时刻执行 <code>/usr/sbin/logrotate /etc/logrotate.d/nginx-access-log.conf</code> 命令，实际就是每天凌晨进行日志轮转</p>
+</li>
+</ol>
+
+      
+    </div>
+    
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2015/10/01/日志管理-Logrotate-日志切割和转存/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          日志管理- Logrotate 日志切割和转存
+        
+      </div>
+    </a>
+  
+  
+</nav>
+
+  
+</article>
+
+
+<div class="share">
+	<!-- JiaThis Button BEGIN -->
+	<div class="jiathis_style">
+		<span class="jiathis_txt">分享到：</span>
+		<a class="jiathis_button_tsina"></a>
+		<a class="jiathis_button_cqq"></a>
+		<a class="jiathis_button_douban"></a>
+		<a class="jiathis_button_weixin"></a>
+		<a class="jiathis_button_tumblr"></a>
+		<a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jtico jtico_jiathis" target="_blank"></a>
+	</div>
+	<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=1405949716054953" charset="utf-8"></script>
+	<!-- JiaThis Button END -->
+</div>
+
+
+
+<div class="duoshuo">
+	<!-- 多说评论框 start -->
+	<div class="ds-thread" data-thread-key="计划任务 - Cron(Linux)" data-title="Linux 定时任务" data-url="http://yoursite.com/2015/10/01/计划任务 - Cron(Linux)/"></div>
+	<!-- 多说评论框 end -->
+	<!-- 多说公共JS代码 start (一个网页只需插入一次) -->
+	<script type="text/javascript">
+	var duoshuoQuery = {short_name:"true"};
+	(function() {
+		var ds = document.createElement('script');
+		ds.type = 'text/javascript';ds.async = true;
+		ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+		ds.charset = 'UTF-8';
+		(document.getElementsByTagName('head')[0] 
+		 || document.getElementsByTagName('body')[0]).appendChild(ds);
+	})();
+	</script>
+	<!-- 多说公共JS代码 end -->
+</div>
+
+
+
+
+</div>
+      <footer id="footer">
+  <div class="outer">
+    <div id="footer-info">
+    	<div class="footer-left">
+    		&copy; 2016 加帆
+    	</div>
+      	<div class="footer-right">
+      		<a href="http://hexo.io/" target="_blank">Hexo</a>  Theme <a href="https://github.com/litten/hexo-theme-yilia" target="_blank">Yilia</a> by Litten
+      	</div>
+    </div>
+  </div>
+</footer>
+    </div>
+    
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+
+<script>
+	var yiliaConfig = {
+		fancybox: true,
+		mathjax: true,
+		animate: true,
+		isHome: false,
+		isPost: true,
+		isArchive: false,
+		isTag: false,
+		isCategory: false,
+		open_in_new: false
+	}
+</script>
+<script src="http://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+
+
+
+
+
+<script type="text/x-mathjax-config">
+MathJax.Hub.Config({
+    tex2jax: {
+        inlineMath: [ ['$','$'], ["\\(","\\)"]  ],
+        processEscapes: true,
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+});
+
+MathJax.Hub.Queue(function() {
+    var all = MathJax.Hub.getAllJax(), i;
+    for(i=0; i < all.length; i += 1) {
+        all[i].SourceElement().parentNode.className += ' has-jax';                 
+    }       
+});
+</script>
+
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+
+
+  </div>
+</body>
+</html>
